@@ -3,6 +3,8 @@ package com.shaili.backend.Security;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
+
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
@@ -12,21 +14,26 @@ import java.util.Date;
 @Component
 public class JwtUtil {
 
-    private static final String SECRET = "THIS_IS_A_VERY_SECURE_SECRET_KEY_FOR_JWT_SHAILI_APP_2026";
+    @Value("${jwt.secret}")
+    private String secret;
 
-    private static final long EXPIRATION = 1000L * 60 * 60 * 24;
+    @Value("${jwt.expiration}")
+    private long expiration;
 
     private SecretKey getSigningKey() {
         return Keys.hmacShaKeyFor(
-                SECRET.getBytes(StandardCharsets.UTF_8));
+                secret.getBytes(StandardCharsets.UTF_8));
     }
 
     public String generateToken(String email, String role) {
+
         return Jwts.builder()
                 .subject(email)
                 .claim("role", role)
                 .issuedAt(new Date())
-                .expiration(new Date(System.currentTimeMillis() + EXPIRATION))
+                .expiration(
+                        new Date(
+                                System.currentTimeMillis() + expiration))
                 .signWith(getSigningKey())
                 .compact();
     }
@@ -40,6 +47,7 @@ public class JwtUtil {
     }
 
     public boolean validateToken(String token) {
+
         try {
             getClaims(token);
             return true;
@@ -49,6 +57,7 @@ public class JwtUtil {
     }
 
     private Claims getClaims(String token) {
+
         return Jwts.parser()
                 .verifyWith(getSigningKey())
                 .build()
