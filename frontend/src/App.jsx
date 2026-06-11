@@ -1,41 +1,73 @@
-import { useEffect } from "react";
-import axios from "axios";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+
+import Login from "./pages/Login";
+import Register from "./pages/Register";
+
+import AdminDashboard from "./pages/AdminDashboard";
+import OwnerDashboard from "./pages/OwnerDashboard";
+import SignerDashboard from "./pages/SignerDashboard";
+
+import ProtectedRoute from "./Components/ProtectedRoute";
 
 function App() {
+    return (
+        <BrowserRouter>
+            <Routes>
 
-  useEffect(() => {
-    axios.post("http://localhost:8080/api/auth/login", {
-      email: "papa@gmail.com",
-      password: "papa123"
-    })
-    .then(loginRes => {
-      console.log("LOGIN RESPONSE:", loginRes.data);
+                {/* Default Route */}
+                <Route
+                    path="/"
+                    element={<Navigate to="/login" />}
+                />
 
-      const token = loginRes.data.token;
-      console.log("TOKEN:", token);
+                {/* Public Routes */}
+                <Route
+                    path="/login"
+                    element={<Login />}
+                />
 
-      return axios.get(
-        "http://localhost:8080/api/user/me",
-        {
-          headers: {
-            Authorization: `Bearer ${token}`
-          }
-        }
-      );
-    })
-    .then(userRes => {
-      console.log("USER RESPONSE:", userRes.data);
-    })
-    .catch(err => {
-      console.log("STATUS:", err.response?.status);
-      console.log("DATA:", err.response?.data);
-      console.log(err);
-    });
-  }, []);
+                <Route
+                    path="/register"
+                    element={<Register />}
+                />
 
-  return (
-    <h1>Document Signature App</h1>
-  );
+                {/* Protected Routes */}
+                <Route
+                    path="/admin"
+                    element={
+                        <ProtectedRoute>
+                            <AdminDashboard />
+                        </ProtectedRoute>
+                    }
+                />
+
+                <Route
+                    path="/owner"
+                    element={
+                        <ProtectedRoute>
+                            <OwnerDashboard />
+                        </ProtectedRoute>
+                    }
+                />
+
+                <Route
+                    path="/signer"
+                    element={
+                        <ProtectedRoute>
+                            <SignerDashboard />
+                        </ProtectedRoute>
+                    }
+                />
+
+                {/* 404 Fallback */}
+                <Route
+                    path="*"
+                    element={<h1>404 - Page Not Found</h1>}
+                />
+
+            </Routes>
+        </BrowserRouter>
+    );
 }
 
 export default App;
