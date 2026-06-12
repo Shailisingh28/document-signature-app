@@ -20,63 +20,63 @@ import lombok.RequiredArgsConstructor;
 @Configuration
 @RequiredArgsConstructor
 public class SecurityConfig {
-    private final JwtFilter jwtFilter;
+        private final JwtFilter jwtFilter;
 
-    @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        return http
-                .cors(cors -> {
-                })
-                .csrf(csrf -> csrf.disable())
-                .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .authorizeHttpRequests(auth -> auth
+        @Bean
+        public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+                return http
+                                .cors(cors -> {
+                                })
+                                .csrf(csrf -> csrf.disable())
+                                .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                                .authorizeHttpRequests(auth -> auth
 
-                        .requestMatchers("/api/auth/**").permitAll()
+                                                .requestMatchers("/api/auth/**").permitAll()
+                                                .requestMatchers("/api/documents/**").hasRole("OWNER")
+                                                .requestMatchers("/admin/**").hasRole("ADMIN")
+                                                .requestMatchers("/owner/**").hasRole("OWNER")
+                                                .requestMatchers("/signer/**").hasRole("SIGNER")
 
-                        .requestMatchers("/admin/**").hasRole("ADMIN")
-                        .requestMatchers("/owner/**").hasRole("OWNER")
-                        .requestMatchers("/signer/**").hasRole("SIGNER")
+                                                .anyRequest().authenticated())
+                                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
+                                .build();
+        }
 
-                        .anyRequest().authenticated())
-                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
-                .build();
-    }
+        @Bean
+        public AuthenticationManager authenticationManager(
+                        AuthenticationConfiguration config) throws Exception {
+                return config.getAuthenticationManager();
+        }
 
-    @Bean
-    public AuthenticationManager authenticationManager(
-            AuthenticationConfiguration config) throws Exception {
-        return config.getAuthenticationManager();
-    }
+        @Bean
+        public CorsConfigurationSource corsConfigurationSource() {
 
-    @Bean
-    public CorsConfigurationSource corsConfigurationSource() {
+                CorsConfiguration configuration = new CorsConfiguration();
 
-        CorsConfiguration configuration = new CorsConfiguration();
+                configuration.setAllowedOriginPatterns(
+                                List.of(
+                                                "http://localhost:*"));
 
-        configuration.setAllowedOriginPatterns(
-                List.of(
-                        "http://localhost:*"));
+                configuration.setAllowedMethods(
+                                List.of(
+                                                "GET",
+                                                "POST",
+                                                "PUT",
+                                                "DELETE",
+                                                "OPTIONS"));
 
-        configuration.setAllowedMethods(
-                List.of(
-                        "GET",
-                        "POST",
-                        "PUT",
-                        "DELETE",
-                        "OPTIONS"));
+                configuration.setAllowedHeaders(
+                                List.of("*"));
 
-        configuration.setAllowedHeaders(
-                List.of("*"));
+                configuration.setAllowCredentials(true);
 
-        configuration.setAllowCredentials(true);
+                UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
 
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+                source.registerCorsConfiguration(
+                                "/**",
+                                configuration);
 
-        source.registerCorsConfiguration(
-                "/**",
-                configuration);
-
-        return source;
-    }
+                return source;
+        }
 
 }

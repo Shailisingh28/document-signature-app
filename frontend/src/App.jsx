@@ -6,7 +6,8 @@ import Register from "./pages/Register";
 import AdminDashboard from "./pages/AdminDashboard";
 import OwnerDashboard from "./pages/OwnerDashboard";
 import SignerDashboard from "./pages/SignerDashboard";
-
+import UploadDocument from "./pages/UploadDocument";
+import Documents from "./pages/Documents";
 import ProtectedRoute from "./Components/ProtectedRoute";
 
 function App() {
@@ -40,6 +41,23 @@ function App() {
                         </ProtectedRoute>
                     }
                 />
+                <Route
+    path="/upload"
+    element={
+        <ProtectedRoute>
+            <UploadDocument />
+        </ProtectedRoute>
+    }
+/>
+
+<Route
+    path="/documents"
+    element={
+        <ProtectedRoute>
+            <Documents />
+        </ProtectedRoute>
+    }
+/>
 
                 <Route
                     path="/owner"
