@@ -33,6 +33,9 @@ public class SecurityConfig {
 
                                                 .requestMatchers("/api/auth/**").permitAll()
                                                 .requestMatchers("/api/documents/**").hasRole("OWNER")
+                                                .requestMatchers(
+                                                                "/api/signatures/**")
+                                                .hasRole("OWNER")
                                                 .requestMatchers("/admin/**").hasRole("ADMIN")
                                                 .requestMatchers("/owner/**").hasRole("OWNER")
                                                 .requestMatchers("/signer/**").hasRole("SIGNER")

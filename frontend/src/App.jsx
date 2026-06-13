@@ -1,5 +1,6 @@
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
-
+import SignaturePlacement
+from "./pages/SignaturePlacement";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 
@@ -55,6 +56,14 @@ function App() {
     element={
         <ProtectedRoute>
             <Documents />
+        </ProtectedRoute>
+    }
+/>
+<Route
+    path="/signature-placement"
+    element={
+        <ProtectedRoute>
+            <SignaturePlacement />
         </ProtectedRoute>
     }
 />
