@@ -34,7 +34,7 @@ export default function SignaturePlacement() {
 
             await createSignature({
                 documentId: 1,
-                signerId: 2,
+                signerId: 9,
                 pageNumber: 1,
                 xCoordinate: coordinates.x,
                 yCoordinate: coordinates.y

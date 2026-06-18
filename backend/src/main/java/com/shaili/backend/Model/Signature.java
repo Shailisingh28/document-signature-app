@@ -35,4 +35,5 @@ public class Signature {
     @ManyToOne
     @JoinColumn(name = "signer_id")
     private User signer;
+    private String signedValue;
 }

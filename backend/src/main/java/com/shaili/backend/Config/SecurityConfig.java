@@ -2,6 +2,7 @@ package com.shaili.backend.Config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -32,13 +33,28 @@ public class SecurityConfig {
                                 .authorizeHttpRequests(auth -> auth
 
                                                 .requestMatchers("/api/auth/**").permitAll()
-                                                .requestMatchers("/api/documents/**").hasRole("OWNER")
+
+                                                .requestMatchers("/api/signatures/pending")
+                                                .hasRole("SIGNER")
+
                                                 .requestMatchers(
-                                                                "/api/signatures/**")
+                                                                HttpMethod.POST, "/api/signatures/*/sign")
+                                                .hasRole("SIGNER")
+
+                                                .requestMatchers("/api/documents/**")
                                                 .hasRole("OWNER")
-                                                .requestMatchers("/admin/**").hasRole("ADMIN")
-                                                .requestMatchers("/owner/**").hasRole("OWNER")
-                                                .requestMatchers("/signer/**").hasRole("SIGNER")
+
+                                                .requestMatchers("/api/signatures/**")
+                                                .hasRole("OWNER")
+
+                                                .requestMatchers("/admin/**")
+                                                .hasRole("ADMIN")
+
+                                                .requestMatchers("/owner/**")
+                                                .hasRole("OWNER")
+
+                                                .requestMatchers("/signer/**")
+                                                .hasRole("SIGNER")
 
                                                 .anyRequest().authenticated())
                                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
