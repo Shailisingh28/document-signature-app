@@ -2,6 +2,7 @@ package com.shaili.backend.Service.Impl;
 
 import com.shaili.backend.DTO.PendingSignatureResponse;
 import com.shaili.backend.DTO.SignatureRequest;
+import com.shaili.backend.Enums.DocumentStatus;
 import com.shaili.backend.Enums.SignatureStatus;
 import com.shaili.backend.Model.Document;
 import com.shaili.backend.Model.Signature;
@@ -55,8 +56,14 @@ public class SignatureServiceImpl
                                                 SignatureStatus.PENDING)
                                 .build();
 
-                return signatureRepository
-                                .save(signature);
+                Signature savedSignature = signatureRepository.save(signature);
+
+                document.setStatus(
+                                DocumentStatus.SENT);
+
+                documentRepository.save(document);
+
+                return savedSignature;
         }
 
         @Override
@@ -107,7 +114,15 @@ public class SignatureServiceImpl
                 signature.setStatus(
                                 SignatureStatus.SIGNED);
 
-                return signatureRepository
-                                .save(signature);
+                signatureRepository.save(signature);
+
+                Document document = signature.getDocument();
+
+                document.setStatus(
+                                DocumentStatus.SIGNED);
+
+                documentRepository.save(document);
+
+                return signature;
         }
 }

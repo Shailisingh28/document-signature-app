@@ -55,7 +55,8 @@ public class SecurityConfig {
 
                                                 .requestMatchers("/signer/**")
                                                 .hasRole("SIGNER")
-
+                                                .requestMatchers("/api/dashboard/**")
+                                                .hasRole("OWNER")
                                                 .anyRequest().authenticated())
                                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
                                 .build();
